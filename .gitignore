@@ -97,3 +97,5 @@ third_party/py/googlestorage/client_secrets.json
 venv
 venv3
 py/.idea
+/dotnet/UpgradeLog.htm
+/dotnet/UpgradeLog2.htm

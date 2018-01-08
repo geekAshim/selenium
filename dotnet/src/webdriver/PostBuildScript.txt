@@ -1,0 +1,26 @@
+﻿if exist "$(ProjectDir)..\..\..\build\cpp\Win32\$(ConfigurationName)\IEDriverServer.exe" (
+  echo Found IE 32-bit native binary, copying from Win32 build target $(ProjectDir)..\..\..\build\cpp\Win32\$(ConfigurationName)\IEDriverServer.exe
+  copy /y "$(ProjectDir)..\..\..\build\cpp\Win32\$(ConfigurationName)\IEDriverServer.exe" "$(TargetDir)" > NUL
+) else (
+  echo Missing IE 32-bit native binary, copying from Win32 prebuilt location $(ProjectDir)..\..\..\cpp\prebuilt\Win32\Release\IEDriverServer.exe
+  copy /y "$(ProjectDir)..\..\..\cpp\prebuilt\Win32\Release\IEDriverServer.exe" "$(TargetDir)" > NUL
+)
+
+if exist "$(ProjectDir)..\..\..\build\javascript\firefox-driver\webdriver.xpi" (
+  echo Copying Firefox extension from $(ProjectDir)..\..\..\build\javascript\firefox-driver\webdriver.xpi
+  copy /y "$(ProjectDir)..\..\..\build\javascript\firefox-driver\webdriver.xpi" "$(TargetDir)" > NUL
+) else (
+  echo WARN: No Firefox extension found at $(ProjectDir)..\..\..\build\javascript\firefox-driver\webdriver.xpi
+)
+
+echo Copying Firefox preferences file from $(ProjectDir)..\..\..\javascript\firefox-driver\webdriver.json
+copy /y "$(ProjectDir)..\..\..\javascript\firefox-driver\webdriver.json" "$(TargetDir)" > NUL
+
+if not exist "$(TargetDir)getAttribute.js" (
+  echo Building and copying needed atoms
+  pushd "$(ProjectDir)..\..\.."
+  call "go.bat" //javascript/webdriver/atoms:getAttribute //javascript/atoms/fragments:is-displayed
+  popd
+  copy /y "$(ProjectDir)..\..\..\buck-out\gen\javascript\webdriver\atoms\getAttribute.js" "$(TargetDir)" > NUL
+  copy /y "$(ProjectDir)..\..\..\buck-out\gen\javascript\atoms\fragments\is-displayed.js" "$(TargetDir)isDisplayed.js" > NUL
+)
